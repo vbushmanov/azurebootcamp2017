@@ -1,0 +1,70 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+		"resourceGroupName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "vnetaddressPrefixes": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "frontSubnetaddressPrefix": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "backSubnetaddressPrefix": {
+            "defaultValue": "",
+            "type": "String"
+        },
+		"frontSubnetaddressName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "backSubnetaddressName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "location": {
+            "defaultValue": "",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/02eb72b0-4edb-4025-9e68-c604945ebc10/resourceGroups/gabops/providers/Microsoft.Network/virtualNetworks/gabops-vnet-01'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetaddressPrefixes')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('frontSubnetaddressName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('frontSubnetaddressPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "[parameters('backSubnetaddressName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('backSubnetaddressPrefix')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        }
+    ]
+}

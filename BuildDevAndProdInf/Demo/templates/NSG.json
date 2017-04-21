@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "addressPrefix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": ""
+      }
+    },
+	"networkSecurityGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": ""
+      }
+    },
+	"virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": ""
+      }
+    },
+	"subnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "Subnet-1 Prefix"
+      }
+    }
+  },
+  "variables": {
+    "networkSecurityGroupName": "[parameters('networkSecurityGroupName')]",
+    "virtualNetworkName": "[parameters('virtualNetworkName')]",
+    "subnetName": "[parameters('subnetName')]",
+    "apiVersion": "2015-06-15"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('networkSecurityGroupName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow_rdp",
+            "properties": {
+              "description": "allow_rdp_to_subnet",
+              "protocol": "Tcp",
+              "sourcePortRange": "23-45",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 123,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
